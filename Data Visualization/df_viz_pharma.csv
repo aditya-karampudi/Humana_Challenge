@@ -1,0 +1,9 @@
+sum_columns,variable,value,avg_value
+generic,no_issues,134068.3923,2.257993976
+generic,issues,31086.77578,3.048619768
+branded,no_issues,50265.60395,0.846578593
+branded,issues,12280.70608,1.204345011
+mail,no_issues,109772.4155,1.848798577
+mail,issues,21476.61113,2.106169572
+drug_sum,no_issues,450351,7.584858947
+drug_sum,issues,91695,8.992350691

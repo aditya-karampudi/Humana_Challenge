@@ -1,0 +1,11 @@
+test,variable,value
+EVAL,no_issue,49269.77325
+TEST,no_issue,47806.39108
+DUR,no_issue,2514.960616
+OTH,no_issue,12982.03671
+EXC,no_issue,3174.81351
+EVAL,issue,9665.637776
+TEST,issue,9629.378053
+DUR,issue,735.7138583
+OTH,issue,3965.993758
+EXC,issue,1117.943421

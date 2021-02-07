@@ -1,0 +1,9 @@
+,sum_columns,variable,value,avg_value
+0,disabled,no_issues,17904,0.301541053
+1,dual_eligible,no_issues,9759,0.164362105
+2,hospice,no_issues,32,0.000538947
+3,low_income,no_issues,14117,0.23776
+4,disabled,issues,3112,0.3051878
+5,dual_eligible,issues,1682,0.164950476
+6,hospice,issues,4,0.000392272
+7,low_income,issues,2411,0.236442091

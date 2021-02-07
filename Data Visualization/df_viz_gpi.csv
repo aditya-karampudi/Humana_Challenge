@@ -1,0 +1,13 @@
+sum_columns,variable,value,avg_value
+cancer,no_issues,1427,0.024033684
+immuno,no_issues,16575,0.279157895
+hormone,no_issues,31514,0.530762105
+antibio,no_issues,29759,0.501204211
+cardio,no_issues,45749,0.770509474
+neuro,no_issues,20549,0.346088421
+cancer,issues,326,0.031970187
+immuno,issues,2137,0.209571443
+hormone,issues,5757,0.564577817
+antibio,issues,5664,0.555457487
+cardio,issues,7874,0.772187898
+neuro,issues,5008,0.491124841

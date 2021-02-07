@@ -1,0 +1,13 @@
+,sum_columns,variable,value
+0,ambulance,no_issues,1744.874322715518
+1,er,no_issues,1569.9299351847237
+2,outpatient,no_issues,27753.550670010613
+3,physician,no_issues,36721.35969179507
+4,urgent_care,no_issues,470.297559584044
+5,inpatient,no_issues,642.7699231021312
+6,ambulance,issues,1326.3022933529708
+7,er,issues,514.0451273974658
+8,outpatient,issues,5553.298718200326
+9,physician,issues,7262.152297525161
+10,urgent_care,issues,79.56043179967827
+11,inpatient,issues,189.49505421300134
