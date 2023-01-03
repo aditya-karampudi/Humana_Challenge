@@ -36,7 +36,7 @@ from sklearn.utils import resample
 #     X_valid.reset_index(inplace=True,drop=True)
 #     y_valid.reset_index(inplace=True,drop=True)
 
-#     return X_train,X_valid,y_train,y_valid
+#     return X_train,X_valid,y_train,y_validond
 
 
 def preprocessor(df):
@@ -54,5 +54,6 @@ def preprocessor(df):
 
     for col, type_ in params.feature_columns_dtype.items():
         df_fe[col] = df_fe[col].astype(type_)
+    
 #     print(list(df_fe.columns))
     return df_fe

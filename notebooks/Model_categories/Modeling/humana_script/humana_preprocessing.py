@@ -59,12 +59,12 @@ def preprocess_data(args):
         input_files = [ os.path.join(input_data_path, file) for file in os.listdir(input_data_path) ]
         input_files = [x for x in input_files if '.csv' in x]
         
-    print("The files used for processing the {} data {}".format(args.train_or_test, input_files))
+    print("The files used for processing the {} data {}".format(args.train_or_valid_or_test, input_files))
     logger.info("THE FILES ARE IMPORTED")
     raw_data = [pd.read_csv(file) for file in input_files]
     df = pd.concat(raw_data, axis=1)
 
-    print("Successfully imported data from S3. Shape of the {} data {}".format(args.train_or_test, df.shape))
+    print("Successfully imported data from S3. Shape of the {} data {}".format(args.train_or_valid_or_test, df.shape))
     
 #     raw_colnames = []
 #     for type_, col_names in params.raw_columns.items():
@@ -75,14 +75,15 @@ def preprocess_data(args):
 #         df.columns = raw_colnames + [params.label_column]
 #     elif len(df.columns) == len(raw_colnames):
 #         df.columns = raw_colnames
-        
-    print(df['transportation_issues'].head())
 
-    print("Successfully imported data from S3. Shape of the {} data {}".format(args.train_or_test, df.shape))
+    print("Successfully imported data from S3. Shape of the {} data {}".format(args.train_or_valid_or_test, df.shape))
     df = df.head(3000)
     df_fe = preprocessing.preprocessor(df=df)
-    print("Preprocessed {} data".format(args.train_or_test))
+    print("Preprocessed {} data".format(args.train_or_valid_or_test))
     
+    if params.label_column in df.columns:
+        df_fe = df[[params.label_column]].merge(df_fe, how ='left', left_index=True, right_index=True)
+        
     return df, df_fe
     
     
@@ -90,7 +91,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     # Sagemaker specific arguments. Defaults are set in the environent variables.
-    parser.add_argument('--train_or_test', type=str, default="test")
+    parser.add_argument('--train_or_valid_or_test', type=str, default="test")
     
     # If using notebookdf_fe_encoded.csv for debugging or execution
     parser.add_argument('--debugger', type=bool, default=False)
@@ -100,27 +101,18 @@ if __name__ == '__main__':
                       
     df, df_fe = preprocess_data(args=args)
     
-    if args.train_or_test == "train":
-        df_fe = df_fe.merge(df[['transportation_issues']], how = 'left', left_index=True, right_index=True)
-        if args.debugger == True:
-            df_fe.to_csv("data/df_fe_train.csv", header=False, index=False)
-#             df[['transportation_issues']].to_csv("data/df_y.csv", header=True, index=False)
-            print("Saved the files")
-        else:
-            train_features_output_path = os.path.join("/opt/ml/processing/train", "df_fe_train.csv")
-            df_fe.to_csv(train_features_output_path, header=False, index=False)
+    print(df_fe.shape)
+    
+    if args.debugger == True:
+        filename = "data/df_fe_{}.csv".format(args.train_or_valid_or_test)
+        df_fe.to_csv(filename, header=False, index=False)
+        print("Saved the files")
+    else:
+        path_dir = "/opt/ml/processing/{}".format(args.train_or_valid_or_test)
+        filename = "df_fe_{}.csv".format(args.train_or_valid_or_test)
+        train_features_output_path = os.path.join(path_dir, filename)
+        df_fe.to_csv(train_features_output_path, header=False, index=False)
             
-#             train_dependent_output_path = os.path.join("/opt/ml/processing/train", "df_y.csv")
-#             df[['transportation_issues']].to_csv(train_dependent_output_path, header=True, index=False)
-            
-    if args.train_or_test == "test":
-        if args.debugger == True:
-            pd.DataFrame(df_fe).to_csv("data/df_fe_test.csv", header=False, index=False)
-            print("Saved the files")
-        else:
-            train_features_output_path = os.path.join("/opt/ml/processing/test", "df_fe_test.csv")
-            pd.DataFrame(df_fe).to_csv(train_features_output_path, header=False, index=False)
-
             
 #     if args.train_or_test == "train":                
 #         sc = transforming.transformer(df = df_fe)

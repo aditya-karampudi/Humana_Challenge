@@ -28,7 +28,7 @@ def total_sum_features(df):
 
 def condition_processing(df):
     condition_df = df[params.feature_column_cols['condition']['numerical_cols'] + params.feature_column_cols['condition']['categorical_cols']]
-    condition_df[params.feature_column_cols['condition']['categorical_cols']] = np.where(condition_df[params.feature_column_cols['condition']['categorical_cols']] != 0, 1,0)
+    condition_df[params.feature_column_cols['condition']['categorical_cols']] = np.where(condition_df[params.feature_column_cols['condition']['categorical_cols']] != 0, 1, 0)
     
     condition_df = sum_feature_generation(df = condition_df, categories = params.condition_categories)
     condition_fe_df = total_sum_features(df = condition_df)

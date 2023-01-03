@@ -1056,10 +1056,6 @@ feature_column_cols['condition']['categorical_cols'] = ['submcc_ano_cns_ind',
 
 
 
-feature_curated_cols = {}
-feature_curated_cols['condition'] = {}
-feature_curated_cols['condition']['categorical_cols'] = [ 'service_bool']
-
 feature_column_cols['condition']['numerical_cols'] = ['submcc_ano_cns_pmpm_ct',
  'submcc_ano_dig_pmpm_ct',
  'submcc_ano_gu_pmpm_ct',
@@ -1229,6 +1225,10 @@ feature_column_cols['condition']['numerical_cols'] = ['submcc_ano_cns_pmpm_ct',
 
 
 
+
+feature_curated_cols = {}
+feature_curated_cols['condition'] = {}
+feature_curated_cols['condition']['categorical_cols'] = [ 'service_bool']
 
 feature_curated_cols['condition']['numerical_cols'] = ['ano_ind_sum',
  'ano_pmpm_sum',

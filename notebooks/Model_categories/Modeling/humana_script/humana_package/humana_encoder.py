@@ -12,8 +12,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import Binarizer, StandardScaler, OneHotEncoder
 
-from sagemaker_containers.beta.framework import (
-    content_types, encoders, env, modules, transformer, worker)
+
 
 
 if __name__ == "__main__":    
@@ -41,6 +40,8 @@ if __name__ == "__main__":
         
         args = parser.parse_args()
 
+        if args.debugger == False:
+            from sagemaker_containers.beta.framework import (content_types, encoders, env, modules, transformer, worker)
         # Take the set of files and read them all into a single pandas dataframe
         input_files = [os.path.join(args.train, file) for file in os.listdir(args.train)]
         input_files = [x for x in input_files if '.csv' in x]
@@ -67,11 +68,15 @@ if __name__ == "__main__":
             )
             for file in input_files
         ]
+    
         df_fe = pd.concat(raw_data)
+        
+        print(df_fe.shape)
+        print(df_fe.columns)
         
         if len(df_fe.columns) == len(params.fe_column_names) + 1:
             # This is a labelled example, includes the ring label
-            df_fe.columns = params.fe_column_names + [params.label_column]
+            df_fe.columns = [params.label_column] + params.fe_column_names
         elif len(df_fe.columns) == len(params.fe_column_names):
             # This is an unlabelled example.
             df_fe.columns = params.fe_column_names
@@ -87,6 +92,14 @@ if __name__ == "__main__":
         print(df_fe.dtypes.value_counts())
         sc = transforming.transformer(df = df_fe)
         print("Train data shape after preprocessing: {}".format(df_fe.shape))
+        numeric_cols = [col for col, type_ in params.feature_columns_dtype.items() if type_ != "category"]
+        category_cols = [col for col, type_ in params.feature_columns_dtype.items() if type_ == "category"]
+        
+        assert len(sc.transformers_[0][2]) == len(numeric_cols)
+        assert len(sc.transformers_[1][2]) == len(category_cols)
+
+        col_names = list(sc.transformers_[0][1].named_steps['scaler'].get_feature_names_out(numeric_cols)) + list( sc.transformers_[1][1].named_steps['onehot'].get_feature_names_out(category_cols))
+        
         joblib.dump(sc, os.path.join(args.model_dir, "model.joblib"))
         
 
@@ -105,7 +118,7 @@ def input_fn(input_data, content_type):
         if len(df.columns) == len(params.fe_column_names) + 1:
             dependent = True
             # This is a labelled example, includes the ring label
-            df.columns = params.fe_column_names + [params.label_column]
+            df.columns = [params.label_column] + params.fe_column_names 
         elif len(df.columns) == len(params.fe_column_names):
             # This is an unlabelled example.
             df.columns = params.fe_column_names
@@ -116,7 +129,9 @@ def input_fn(input_data, content_type):
             
         if dependent:
             df[params.label_column] = df[params.label_column].astype(params.label_columns_dtype[params.label_column])
-
+        print(df.columns)
+        print(df.shape)
+        print(df.head())
         return df
     else:
         raise ValueError("{} not supported by script!".format(content_type))
@@ -129,6 +144,15 @@ def output_fn(prediction, accept):
     We also want to set the ContentType or mimetype as the same value as accept so the next
     container can read the response payload correctly.
     """
+    from sagemaker_containers.beta.framework import (
+    content_types,
+    encoders,
+    env,
+    modules,
+    transformer,
+    worker,
+    )
+    
     if accept == "application/json":
         instances = []
         for row in prediction.tolist():
@@ -153,6 +177,7 @@ def predict_fn(input_data, model):
 
         rest of features either one hot encoded or standardized
     """
+    
     features = model.transform(input_data)
 
     if params.label_column in input_data:
